@@ -1,2 +1,2 @@
-from src.pysweeper import Game 
-from src.pysweeper import Cell
+from src.pythonsweeper import Game 
+from src.pythonsweeper import Cell

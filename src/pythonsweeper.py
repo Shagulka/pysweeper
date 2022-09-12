@@ -90,3 +90,12 @@ class Game:
                 if self._get_cell(x, y) == Cell.MINE and self._get_player_cell(x, y) == Cell.EXPLODED:
                     return True
         return False
+
+    def get_player_cell(self, x, y):
+        return self.player_board[y][x]
+    
+    def get_player_board(self):
+        return self.player_board
+
+    def get_board(self):
+        return self.board
