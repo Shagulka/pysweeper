@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: pythonsweeper
-Version: 0.1.6
+Version: 0.2.0
 Summary: A Python implementation of the classic Minesweeper game
 Home-page: https://github.com/Shagulka/pysweeper
 Author: Boris Khesin

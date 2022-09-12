@@ -1,110 +1,94 @@
 from enum import Enum
 import random
 
-class Cell(Enum):
-    EMPTY = 0
-    MINE = 1
-    FLAG = 2
-    QUESTION = 3
-    EXPLODED = 4
+class GameStatus(Enum):
+    RUNNING = 1
+    WIN = 2
+    LOSE = 3
 
 class Game:
+    # mine is 9
+    # empty is 0
+    # 1-8 is the number of mines around the cell
+    # unrevealed is -1
+    #flag is -2
+    #question is -3
+    #return status of the game after each move
     def __init__(self, width, height, mines):
         self.width = width
         self.height = height
         self.mines = mines
-        self.board = [[Cell.EMPTY for x in range(width)] for y in range(height)]
-        self.player_board = [[Cell.EMPTY for x in range(width)] for y in range(height)]
+        self.board = [[0 for x in range(width)] for y in range(height)]
+        self.player_board = [[-1 for x in range(width)] for y in range(height)]
         self._place_mines()
         self._calculate_numbers()
 
     def _place_mines(self):
         for i in range(self.mines):
-            x = random.randint(0, self.width - 1)
-            y = random.randint(0, self.height - 1)
-            while self.board[y][x] == Cell.MINE:
+            while True:
                 x = random.randint(0, self.width - 1)
                 y = random.randint(0, self.height - 1)
-            self.board[y][x] = Cell.MINE
-    
+                if self.board[y][x] == 0:
+                    self.board[y][x] = 9
+                    break
+
     def _calculate_numbers(self):
         for y in range(self.height):
             for x in range(self.width):
-                if self.board[y][x] == Cell.MINE:
-                    continue
-                self.board[y][x] = self._get_number(x, y)
-    
-    def _get_number(self, x, y):
+                if self.board[y][x] != 9:
+                    self.board[y][x] = self._count_mines_around(x, y)
+                
+    def _count_mines_around(self, x, y):
         count = 0
-        for i in range(y - 1, y + 2):
-            for j in range(x - 1, x + 2):
-                if i < 0 or i >= self.height or j < 0 or j >= self.width:
+        for i in range(-1, 2):
+            for j in range(-1, 2):
+                if i == 0 and j == 0:
                     continue
-                if self.board[i][j] == Cell.MINE:
+                if self.board[x+i][y+j] == 9:
                     count += 1
         return count
-    
-    def _get_cell(self, x, y):
-        return self.board[y][x]
-    
-    def _get_player_cell(self, x, y):
-        return self.player_board[y][x]  
-    
-    def reveal(self, x, y):
-        if self._get_cell(x, y) == Cell.MINE:
-            self.player_board[y][x] = Cell.EXPLODED
-            return False
-        self._reveal(x, y)
-        return True
-    
-    def _reveal(self, x, y):
-        if self._get_cell(x, y) == Cell.EMPTY:
-            self.player_board[y][x] = Cell.EMPTY
-            for i in range(y - 1, y + 2):
-                for j in range(x - 1, x + 2):
-                    if i < 0 or i >= self.height or j < 0 or j >= self.width:
-                        continue
-                    if self._get_player_cell(j, i) == Cell.EMPTY:
-                        self._reveal(j, i)
-        else:
-            self.player_board[y][x] = self._get_cell(x, y)
 
-    def mark(self, x, y):
-        if self._get_player_cell(x, y) == Cell.EMPTY:
-            self.player_board[y][x] = Cell.FLAG
-        elif self._get_player_cell(x, y) == Cell.FLAG:
-            self.player_board[y][x] = Cell.QUESTION
-        elif self._get_player_cell(x, y) == Cell.QUESTION:
-            self.player_board[y][x] = Cell.EMPTY
+    #board generation is done
 
-    def is_won(self):
+    def reveal (self, x, y):
+        if self.player_board[y][x] == -1:
+            if self.board[y][x] == 9:
+                self.player_board[y][x] = 9
+                return GameStatus.LOSE
+            elif self.board[y][x] < 9 and self.board[y][x] > 0:
+                self.player_board[y][x] = self.board[y][x]
+                self._reveal_empty(x, y)
+                return GameStatus.RUNNING
+    
+    def _reveal_empty(self, x, y):
+        for i in range(-1, 2):
+            for j in range(-1, 2):
+                if i == 0 and j == 0:
+                    continue
+                if self.board[y][x] < 9 and self.board[y][x] > 0:
+                    self.player_board[y + j][x + i] = self.board[y + j][x + i]
+                    self._reveal_empty(x + i, y + j)
+    
+    def flag(self, x, y):
+        if self.player_board[y][x] == -1:
+            self.player_board[y][x] = -2
+        elif self.player_board[y][x] == -2:
+            self.player_board[y][x] = -3
+        elif self.player_board[y][x] == -3:
+            self.player_board[y][x] = -1
+
+    def get_status(self):
         for y in range(self.height):
             for x in range(self.width):
-                if self._get_cell(x, y) != Cell.MINE and self._get_player_cell(x, y) == Cell.EMPTY:
-                    return False
-        return True
-    
-    def is_lost(self):
-        for y in range(self.height):
-            for x in range(self.width):
-                if self._get_cell(x, y) == Cell.MINE and self._get_player_cell(x, y) == Cell.EXPLODED:
-                    return True
-        return False
-
-    def get_player_cell(self, x, y):
-        return self.player_board[y][x]
-    
-    def get_player_board(self):
-        return self.player_board
+                if self.player_board[y][x] == -1:
+                    return GameStatus.RUNNING
+        return GameStatus.WIN
 
     def get_board(self):
+        return self.player_board
+
+    def get_game_board(self):
         return self.board
 
-    def get_width(self):
-        return self.width
 
-    def get_height(self):
-        return self.height
-
-def get_enum_name(enum):
-    return enum.name.lower()
+     
