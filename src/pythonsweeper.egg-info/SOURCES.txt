@@ -1,0 +1,8 @@
+LICENSE
+README.md
+setup.cfg
+setup.py
+src/pythonsweeper.egg-info/PKG-INFO
+src/pythonsweeper.egg-info/SOURCES.txt
+src/pythonsweeper.egg-info/dependency_links.txt
+src/pythonsweeper.egg-info/top_level.txt
