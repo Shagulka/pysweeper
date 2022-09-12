@@ -99,3 +99,12 @@ class Game:
 
     def get_board(self):
         return self.board
+
+    def get_width(self):
+        return self.width
+
+    def get_height(self):
+        return self.height
+
+def get_enum_name(enum):
+    return enum.name.lower()
