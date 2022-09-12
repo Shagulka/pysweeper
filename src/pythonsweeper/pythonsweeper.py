@@ -44,8 +44,9 @@ class Game:
             for j in range(-1, 2):
                 if i == 0 and j == 0:
                     continue
-                if self.board[x+i][y+j] == 9:
-                    count += 1
+                if x + i < 0 or x + i >= self.width or y + j < 0 or y + j >= self.height:
+                    if self.board[x+i][y+j] == 9:
+                        count += 1
         return count
 
     #board generation is done
@@ -65,9 +66,10 @@ class Game:
             for j in range(-1, 2):
                 if i == 0 and j == 0:
                     continue
-                if self.board[y][x] < 9 and self.board[y][x] > 0:
-                    self.player_board[y + j][x + i] = self.board[y + j][x + i]
-                    self._reveal_empty(x + i, y + j)
+                if x + i < 0 or x + i >= self.width or y + j < 0 or y + j >= self.height:
+                    if self.board[y+j][x+i] < 9 and self.board[y+j][x+i] > 0:
+                        self.player_board[y + j][x + i] = self.board[y + j][x + i]
+                        self._reveal_empty(x + i, y + j)
     
     def flag(self, x, y):
         if self.player_board[y][x] == -1:
