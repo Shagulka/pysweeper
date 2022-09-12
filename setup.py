@@ -12,7 +12,8 @@ setup(
     url='https://github.com/Shagulka/pysweeper',
     keywords='minesweeper',
     install_requires=[
-          '',
+          'enum',
+          'random'
       ],
 
 )
