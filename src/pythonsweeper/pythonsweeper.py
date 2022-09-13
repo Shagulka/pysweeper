@@ -67,6 +67,12 @@ class Game:
                     if not (x + j < 0 or x + j >= self.width or y + i < 0 or y + i >= self.height):
                         if self.board[y+i][x+j] != 9:
                             self._reveal(x+j, y+i)
+        if self.board[y][x] != 0:
+            for i in range(-1, 2):
+                for j in range(-1, 2):
+                    if not (x + j < 0 or x + j >= self.width or y + i < 0 or y + i >= self.height):
+                        if self.board[y+i][x+j] == 0:
+                            self._reveal(x+j, y+i)
 
     def _flag(self, x, y):
         if self.player_board[y][x] == -1:
