@@ -61,7 +61,7 @@ class Game:
         if self.player_board[y][x] != -1:
             return
         self.player_board[y][x] = self.board[y][x]
-        if self.board[y][x] == 0:
+        if self.board[y][x] != 9:
             for i in range(-1, 2):
                 for j in range(-1, 2):
                     if not (x < 0 or x >= self.width or y < 0 or y >= self.height):
