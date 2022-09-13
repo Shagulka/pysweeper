@@ -44,34 +44,27 @@ class Game:
             for j in range(-1, 2):
                 if i == 0 and j == 0:
                     continue
-                if x + i < 0 or x + i >= self.width or y + j < 0 or y + j >= self.height:
+                if not (x + i > 0 and x + i >= self.width or y + j < 0 or y + j >= self.height):
                     if self.board[x+i][y+j] == 9:
                         count += 1
         return count
 
     #board generation is done
 
-    def reveal (self, x, y):
-        if self.player_board[y][x] == -1:
-            if self.board[y][x] == 9:
-                self.player_board[y][x] = 9
-                return GameStatus.LOSE
-            elif self.board[y][x] < 9 and self.board[y][x] > 0:
-                self.player_board[y][x] = self.board[y][x]
-                self._reveal_empty(x, y)
-                return GameStatus.RUNNING
-    
-    def _reveal_empty(self, x, y):
-        for i in range(-1, 2):
-            for j in range(-1, 2):
-                if i == 0 and j == 0:
-                    continue
-                if x + i < 0 or x + i >= self.width or y + j < 0 or y + j >= self.height:
-                    if self.board[y+j][x+i] < 9 and self.board[y+j][x+i] > 0:
-                        self.player_board[y + j][x + i] = self.board[y + j][x + i]
-                        self._reveal_empty(x + i, y + j)
-    
-    def flag(self, x, y):
+    #avoid out of bounds and infinite recursion
+
+    def _reveal(self, x, y):
+        if x < 0 or x >= self.width or y < 0 or y >= self.height:
+            return
+        if self.player_board[y][x] != -1:
+            return
+        self.player_board[y][x] = self.board[y][x]
+        if self.board[y][x] == 0:
+            for i in range(-1, 2):
+                for j in range(-1, 2):
+                    self._reveal(x + i, y + j)
+
+    def _flag(self, x, y):
         if self.player_board[y][x] == -1:
             self.player_board[y][x] = -2
         elif self.player_board[y][x] == -2:
@@ -79,18 +72,41 @@ class Game:
         elif self.player_board[y][x] == -3:
             self.player_board[y][x] = -1
 
-    def get_status(self):
+    def _check_win(self):
         for y in range(self.height):
             for x in range(self.width):
-                if self.player_board[y][x] == -1:
-                    return GameStatus.RUNNING
-        return GameStatus.WIN
+                if self.player_board[y][x] == -1 and self.board[y][x] != 9:
+                    return False
+        return True
+
+    def _check_lose(self):
+        for y in range(self.height):
+            for x in range(self.width):
+                if self.player_board[y][x] == 9:
+                    return True
+        return False
+
+    def reveal(self, x, y):
+        if self.player_board[y][x] == -1:
+            self._reveal(x, y)
+        if self._check_win():
+            return GameStatus.WIN
+        if self._check_lose():
+            return GameStatus.LOSE
+        return GameStatus.RUNNING
+
+    def flag(self, x, y):
+        self._flag(x, y)
+        if self._check_win():
+            return GameStatus.WIN
+        return GameStatus.RUNNING
 
     def get_board(self):
         return self.player_board
 
-    def get_game_board(self):
+    def get_mines(self):
         return self.board
 
+    
 
      

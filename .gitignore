@@ -1,3 +1,4 @@
 dist/
 .vscode/
 src/pythonsweeper.egg-info/
+src/pythonsweeper.egg-info/*
