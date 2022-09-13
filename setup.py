@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pythonsweeper',
-    version='0.2.8',
+    version='0.2.9',
     license='MIT',
     author="Boris Khesin",
     author_email='rob.falls.do@gmail.com',
