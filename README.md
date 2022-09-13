@@ -4,7 +4,9 @@ Pysweeper is a Python implementation of the classic Minesweeper game. It is a si
 ## Installation
 The library can be installed using pip:
 
-```pip install pythonsweeper```
+```
+pip install pythonsweeper
+```
 
 ## Usage
 
