@@ -1,10 +1,12 @@
 from enum import Enum
 import random
 
+
 class GameStatus(Enum):
     RUNNING = 1
     WIN = 2
     LOSE = 3
+
 
 class Game:
     # mine is 9
@@ -13,7 +15,7 @@ class Game:
     # unrevealed is -1
     #flag is -2
     #question is -3
-    #return status of the game after each move
+    # return status of the game after each move
     def __init__(self, width, height, mines):
         self.width = width
         self.height = height
@@ -37,7 +39,7 @@ class Game:
             for x in range(self.width):
                 if self.board[y][x] != 9:
                     self.board[y][x] = self._count_mines_around(x, y)
-                
+
     def _count_mines_around(self, x, y):
         count = 0
         for i in range(-1, 2):
@@ -49,9 +51,9 @@ class Game:
                         count += 1
         return count
 
-    #board generation is done
+    # board generation is done
 
-    #avoid out of bounds and infinite recursion
+    # avoid out of bounds and infinite recursion
 
     def _reveal(self, x, y):
         if x < 0 or x >= self.width or y < 0 or y >= self.height:
@@ -62,7 +64,8 @@ class Game:
         if self.board[y][x] == 0:
             for i in range(-1, 2):
                 for j in range(-1, 2):
-                    self._reveal(x + i, y + j)
+                    if self.board[y+i][x+j] != 9:
+                        self._reveal(x+i, y+j)
 
     def _flag(self, x, y):
         if self.player_board[y][x] == -1:
@@ -106,7 +109,3 @@ class Game:
 
     def get_mines(self):
         return self.board
-
-    
-
-     
