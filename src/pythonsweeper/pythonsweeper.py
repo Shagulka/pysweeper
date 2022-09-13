@@ -46,8 +46,8 @@ class Game:
             for j in range(-1, 2):
                 if i == 0 and j == 0:
                     continue
-                if not (x + i > 0 and x + i >= self.width or y + j < 0 or y + j >= self.height):
-                    if self.board[x+i][y+j] == 9:
+                if (x + i >= 0 and x + i < self.width) and (y + j >= 0 and y + j < self.height):
+                    if self.board[y + j][x + i] == 9:
                         count += 1
         return count
 
